@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda | Consultorio Dr. Amado</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">Consultorio Dr. Amado</div>
+        <div class="nav-links">
+            <a href="agenda.html" class="active">Agenda</a>
+            <a href="pacientes.html">Pacientes</a>
+            <a href="#" id="cerrar-sesion">Cerrar Sesión</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        
+        <div class="agenda-controls">
+            <button id="btn-prev-week">&lt; Semana Anterior</button>
+            <h3 id="semana-titulo">Cargando...</h3>
+            <button id="btn-next-week">Siguiente Semana &gt;</button>
+        </div>
+
+        <table class="agenda-table">
+            <thead>
+                <tr>
+                    <th class="hora-col">Hora</th>
+                    <th>Lunes</th>
+                    <th>Martes</th>
+                    <th>Miércoles</th>
+                    <th>Jueves</th>
+                    <th>Viernes</th>
+                </tr>
+            </thead>
+            <tbody id="agenda-body">
+                </tbody>
+        </table>
+
+    </main>
+
+    <div id="modal-agendar" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-agendar-modal">&times;</span>
+            <h2>Agendar Nuevo Turno</h2>
+            <p><strong>Horario:</strong> <span id="modal-horario"></span></p>
+
+            <form id="form-agendar">
+                <input type="hidden" id="modal-fecha">
+                <input type="hidden" id="modal-hora">
+                <div class="form-paciente">
+                    <div class="input-group">
+                        <label for="modal-dni">DNI</label>
+                        <input type="text" id="modal-dni" placeholder="Buscar DNI..." required>
+                    </div>
+                    <div class="input-group">
+                        <label for="modal-nombre">Nombre</label>
+                        <input type="text" id="modal-nombre" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="modal-apellido">Apellido</label>
+                        <input type="text" id="modal-apellido" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="modal-telefono">Teléfono</label>
+                        <input type="text" id="modal-telefono">
+                    </div>
+                    <div class="input-group">
+                        <label for="modal-obraSocial">Obra Social</label>
+                        <input type="text" id="modal-obraSocial">
+                    </div>
+                    <div class="input-group">
+                        <label for="modal-motivo">Motivo de Consulta</label>
+                        <input type="text" id="modal-motivo" required>
+                    </div>
+                    <button type="submit" class="login-button">Guardar Turno</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-delete-turno" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <span class="close-btn" id="close-delete-turno-modal">&times;</span>
+            <h2>Confirmar Eliminación</h2>
+            <p>¿Está seguro de que desea eliminar este turno?</p>
+            <p id="delete-turno-info" style="font-weight: bold;"></p>
+            
+            <div class="modal-actions">
+                <button id="btn-cancel-delete-turno" class="action-btn btn-secondary">Cancelar</button>
+                <button id="btn-confirm-delete-turno" class="action-btn btn-danger">Confirmar Eliminación</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="js/agenda.js"></script>
+</body>
+</html>
