@@ -417,3 +417,80 @@ body {
 .btn-secondary:hover {
     background-color: #5a6268;
 }
+
+/* =================================
+   ESTILOS PANTALLA DE PACIENTES
+   ================================= */
+
+.pacientes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap; /* Para celulares */
+    gap: 1rem;
+}
+
+.pacientes-header h2 {
+    margin: 0;
+    color: #333;
+}
+
+/* Botón verde de "Registrar" */
+.btn-primario {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #28a745; /* Verde */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primario:hover {
+    background-color: #218838;
+}
+
+/* Barra de búsqueda */
+.paciente-search {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    box-sizing: border-box; /* Importante */
+}
+
+/* Tabla de Pacientes (muy similar a la de agenda) */
+.pacientes-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pacientes-table th,
+.pacientes-table td {
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.pacientes-table th {
+    background-color: #f9f9f9;
+    font-weight: bold;
+}
+
+/* Columna de acciones (para centrar botones) */
+.pacientes-table .acciones-col {
+    width: 140px;
+    text-align: center;
+}
+
+/* REUTILIZAMOS .action-btn, .edit-btn, .delete-btn 
+   que ya estaban definidos en tu CSS
+*/

@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let pacientes = JSON.parse(localStorage.getItem('pacientes')) || [];
 
     // --- INICIALIZACIÓN ---
-    startClock();
+    // startClock();
     renderAgenda();
 
     // --- MANEJADORES DE EVENTOS (EVENT LISTENERS) ---

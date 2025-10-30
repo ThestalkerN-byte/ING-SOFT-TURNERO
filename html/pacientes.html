@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacientes | Consultorio Dr. Amado</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">Consultorio Dr. Amado</div>
+        <div class="nav-links">
+            <a href="agenda.html">Agenda</a>
+            <a href="pacientes.html" class="active">Pacientes</a>
+            <a href="#" id="cerrar-sesion">Cerrar Sesión</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        
+        <div class="pacientes-header">
+            <h2>Gestión de Pacientes</h2>
+            <button id="btn-nuevo-paciente" class="btn-primario">
+                + Registrar Nuevo Paciente
+            </button>
+        </div>
+
+        <input type="text" id="paciente-search" class="paciente-search" 
+               placeholder="Buscar paciente por DNI o Apellido...">
+
+        <table classs="pacientes-table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>DNI</th>
+                    <th>Teléfono</th>
+                    <th>Obra Social</th>
+                    <th class="acciones-col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="pacientes-tbody">
+                </tbody>
+        </table>
+
+    </main>
+
+    <script src="../js/pacientes.js" defer></script>
+</body>
+</html>
