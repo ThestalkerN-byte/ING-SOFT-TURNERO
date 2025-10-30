@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Paciente</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">Consultorio Dr. Amado</div>
+        <div class="nav-links">
+            <a href="agenda.html">Agenda</a>
+            <a href="pacientes.html">Pacientes</a>
+            <a href="#" id="cerrar-sesion">Cerrar Sesión</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h2>Registrar Nuevo Paciente</h2>
+
+        <form id="form-paciente" class="pacienteForm">
+            <label>Nombre:</label>
+            <input type="text" id="name" required>
+
+            <label>Apellido:</label>
+            <input type="text" id="surname" required>
+
+            <label>Edad:</label>
+            <input type="number" id="age" required>
+
+            <label>DNI:</label>
+            <input type="text" id="dni" required>
+
+            <label>Obra Social:</label>
+            <input type="text" id="obraSocial" required>
+
+            <label>Teléfono:</label>
+            <input type="text" id="telefono" required>
+
+            <button type="submit" class="btn-primario">Registrar</button>
+            <button type="button" id="btn-cancelar" class="btn-secundario">Cancelar</button>
+        </form>
+    </main>
+
+    <script>
+        document.getElementById("cerrar-sesion").addEventListener("click", function(e){
+            e.preventDefault();
+            window.location.href = "index.html";
+        });
+
+        document.getElementById("btn-cancelar").addEventListener("click", function(){
+            window.location.href = "pacientes.html";
+        });
+
+        document.getElementById("form-paciente").addEventListener("submit", function(e){
+            e.preventDefault();
+
+            const nuevoPaciente = {
+                name: document.getElementById("name").value,
+                surname: document.getElementById("surname").value,
+                age: document.getElementById("age").value,
+                dni: document.getElementById("dni").value,
+                obraSocial: document.getElementById("obraSocial").value,
+                telefono: document.getElementById("telefono").value
+            };
+
+            let pacientes = JSON.parse(localStorage.getItem("pacientes")) || [];
+            pacientes.push(nuevoPaciente);
+            localStorage.setItem("pacientes", JSON.stringify(pacientes));
+
+            alert("✅ Paciente registrado correctamente");
+            window.location.href = "pacientes.html";
+        });
+    </script>
+
+</body>
+</html>
