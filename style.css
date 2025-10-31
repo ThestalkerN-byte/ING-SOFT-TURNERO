@@ -491,6 +491,39 @@ body {
     text-align: center;
 }
 
-/* REUTILIZAMOS .action-btn, .edit-btn, .delete-btn 
-   que ya estaban definidos en tu CSS
-*/
+/* =================================
+   ESTILOS PARA FORMULARIO EN MODAL
+   ================================= */
+
+/* Reutilizamos esta clase que ya usaste en la agenda */
+.form-paciente .input-group {
+    margin-bottom: 1rem;
+}
+
+.form-paciente label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: bold;
+}
+
+.form-paciente input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Contenedor de botones Guardar/Cancelar */
+.form-buttons {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: flex-end; /* Alinea a la derecha */
+    gap: 1rem;
+}
+
+/* Hacemos que los botones se vean como los de la tabla */
+.form-buttons .action-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+}
