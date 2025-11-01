@@ -1,87 +1,174 @@
 document.addEventListener("DOMContentLoaded", function () {
+    
+    // --- CONFIGURACIÓN DE LA API ---
+    const API_BASE_URL = "http://localhost:3000/api";
+    
+    // Obtener referencias a los elementos del formulario
+    // Intentar con ambos IDs posibles (paciente-form y form-paciente)
+    const form = document.getElementById("paciente-form") || document.getElementById("form-paciente");
+    const btnCancelar = document.getElementById("cancelar") || document.getElementById("btn-cancelar");
+    
+    if (!form) {
+        console.error("No se encontró el formulario");
+        return;
+    }
 
-    // --- CERRAR SESIÓN ---
+    // --- CERRAR SESIÓN (si existe) ---
     const cerrarSesion = document.getElementById("cerrar-sesion");
     if (cerrarSesion) {
         cerrarSesion.addEventListener("click", function (e) {
             e.preventDefault();
-            window.location.href = "index.html";
+            window.location.href = "../html/index.html";
         });
     }
 
     // --- BOTÓN CANCELAR ---
-    document.getElementById("cancelar").addEventListener("click", function () {
-        window.location.href = "pacientes.html";
-    });
-
-    // --- GUARDAR PACIENTE ---
-    const form = document.getElementById("form-paciente");
-    form.addEventListener("submit", function (e) {
-        e.preventDefault();
-
-        // 1. Tomar valores del formulario
-        const paciente = {
-            name: document.getElementById("name").value,
-            surname: document.getElementById("surname").value,
-            age: document.getElementById("age").value,
-            dni: document.getElementById("dni").value,
-            phone: document.getElementById("phone").value,
-            obraSocial: document.getElementById("obraSocial").value
-        };
-
-        // 2. Obtener la lista actual de pacientes
-        let pacientes = JSON.parse(localStorage.getItem("pacientes")) || [];
-
-        // 3. Agregar el nuevo paciente
-        pacientes.push(paciente);
-
-        // 4. Guardar la lista actualizada
-        localStorage.setItem("pacientes", JSON.stringify(pacientes));
-
-        // 5. Volver a la página principal de pacientes
-        alert("Paciente registrado correctamente ✅");
-        window.location.href = "pacientes.html";
-    });
-});
-document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("form-paciente");
-
-    // Si venís a editar
-    const editarData = JSON.parse(localStorage.getItem("pacienteEditar"));
-    if (editarData) {
-        const { pacienteEditar } = editarData;
-        document.getElementById("name").value = pacienteEditar.name;
-        document.getElementById("surname").value = pacienteEditar.surname;
-        document.getElementById("age").value = pacienteEditar.age;
-        document.getElementById("dni").value = pacienteEditar.dni;
-        document.getElementById("phone").value = pacienteEditar.phone;
-        document.getElementById("obraSocial").value = pacienteEditar.obraSocial;
+    if (btnCancelar) {
+        btnCancelar.addEventListener("click", function () {
+            window.location.href = "../html/pacientes.html";
+        });
     }
 
-    form.addEventListener("submit", function (e) {
+    // --- CARGAR DATOS SI ES EDICIÓN ---
+    const editarData = JSON.parse(localStorage.getItem("pacienteEditar") || "null");
+    if (editarData && editarData.pacienteEditar) {
+        const paciente = editarData.pacienteEditar;
+        
+        // Mapear los campos según el ID que tenga el formulario
+        const nameField = document.getElementById("name");
+        const surnameField = document.getElementById("surname");
+        const ageField = document.getElementById("age");
+        const dniField = document.getElementById("dni");
+        const phoneField = document.getElementById("phone") || document.getElementById("telefono");
+        const obraSocialField = document.getElementById("obraSocial");
+        
+        if (nameField) nameField.value = paciente.name || "";
+        if (surnameField) surnameField.value = paciente.surname || "";
+        if (ageField) ageField.value = paciente.age || "";
+        if (dniField) dniField.value = paciente.dni || "";
+        if (phoneField) phoneField.value = paciente.phone || paciente.telefono || "";
+        if (obraSocialField) obraSocialField.value = paciente.obraSocial || paciente.medical_insurance || "";
+    }
+
+    // --- GUARDAR PACIENTE ---
+    form.addEventListener("submit", async function (e) {
         e.preventDefault();
 
-        const nuevoPaciente = {
-            name: document.getElementById("name").value,
-            surname: document.getElementById("surname").value,
-            age: document.getElementById("age").value,
-            dni: document.getElementById("dni").value,
-            phone: document.getElementById("phone").value,
-            obraSocial: document.getElementById("obraSocial").value
+        // Obtener valores del formulario
+        const nameField = document.getElementById("name");
+        const surnameField = document.getElementById("surname");
+        const ageField = document.getElementById("age");
+        const dniField = document.getElementById("dni");
+        const phoneField = document.getElementById("phone") || document.getElementById("telefono");
+        const obraSocialField = document.getElementById("obraSocial");
+
+        const pacienteData = {
+            name: nameField ? nameField.value.trim() : "",
+            surname: surnameField ? surnameField.value.trim() : "",
+            age: ageField ? ageField.value : null,
+            dni: dniField ? dniField.value : "",
+            phone: phoneField ? phoneField.value.trim() : null,
+            medical_insurance: obraSocialField ? obraSocialField.value.trim() : ""
         };
 
-        let pacientes = JSON.parse(localStorage.getItem("pacientes")) || [];
-
-        // Si es edición
-        if (editarData) {
-            pacientes[editarData.index] = nuevoPaciente;
-            localStorage.removeItem("pacienteEditar");
-        } else {
-            pacientes.push(nuevoPaciente);
+        // Validaciones básicas
+        if (!pacienteData.name || !pacienteData.surname || !pacienteData.dni || !pacienteData.medical_insurance) {
+            mostrarError("Por favor complete todos los campos requeridos: Nombre, Apellido, DNI y Obra Social");
+            return;
         }
 
-        localStorage.setItem("pacientes", JSON.stringify(pacientes));
-        alert("Paciente guardado correctamente");
-        window.location.href = "pacientes.html";
+        if (isNaN(pacienteData.dni) || pacienteData.dni.length === 0) {
+            mostrarError("El DNI debe ser un número válido");
+            return;
+        }
+
+        try {
+            const dniNumber = parseInt(pacienteData.dni);
+
+            // Verificar si el paciente ya existe (tiene turnos)
+            const responseCheck = await fetch(`${API_BASE_URL}/pacientes/${dniNumber}`);
+            const resultCheck = await responseCheck.json();
+            
+            const pacienteExiste = resultCheck.success && resultCheck.data;
+
+            if (pacienteExiste || editarData) {
+                // Si el paciente existe, actualizar su información en todos sus turnos
+                const response = await fetch(`${API_BASE_URL}/pacientes/${dniNumber}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        name: pacienteData.name,
+                        surname: pacienteData.surname,
+                        phone: pacienteData.phone,
+                        medical_insurance: pacienteData.medical_insurance
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    mostrarExito("Paciente actualizado correctamente");
+                    localStorage.removeItem("pacienteEditar");
+                    
+                    // Esperar un momento antes de redirigir
+                    setTimeout(() => {
+                        window.location.href = "../html/pacientes.html";
+                    }, 1500);
+                } else {
+                    mostrarError(result.error || "Error al actualizar el paciente");
+                }
+            } else {
+                // Si el paciente no existe, guardar temporalmente en localStorage
+                // hasta que se cree un turno para él
+                let pacientesTemporales = JSON.parse(localStorage.getItem("pacientesTemporales") || "[]");
+                
+                // Verificar si ya existe un paciente temporal con ese DNI
+                const indexExistente = pacientesTemporales.findIndex(p => p.dni === dniNumber);
+                
+                const pacienteTemp = {
+                    dni: dniNumber,
+                    name: pacienteData.name,
+                    surname: pacienteData.surname,
+                    age: pacienteData.age,
+                    phone: pacienteData.phone,
+                    medical_insurance: pacienteData.medical_insurance,
+                    created_at: new Date().toISOString()
+                };
+
+                if (indexExistente >= 0) {
+                    pacientesTemporales[indexExistente] = pacienteTemp;
+                } else {
+                    pacientesTemporales.push(pacienteTemp);
+                }
+
+                localStorage.setItem("pacientesTemporales", JSON.stringify(pacientesTemporales));
+                
+                mostrarExito("Paciente guardado. Esta información se usará cuando se cree un turno para este paciente.");
+                localStorage.removeItem("pacienteEditar");
+                
+                setTimeout(() => {
+                    window.location.href = "../html/pacientes.html";
+                }, 2000);
+            }
+        } catch (error) {
+            console.error("Error al guardar paciente:", error);
+            mostrarError("Error de conexión. Verifica que el servidor esté corriendo.");
+        }
     });
+
+    /**
+     * Muestra un mensaje de error
+     */
+    function mostrarError(mensaje) {
+        alert("❌ Error: " + mensaje);
+    }
+
+    /**
+     * Muestra un mensaje de éxito
+     */
+    function mostrarExito(mensaje) {
+        alert("✅ " + mensaje);
+    }
 });
