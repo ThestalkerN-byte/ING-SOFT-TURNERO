@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
     
-    // --- MANEJO DE NAVEGACIÓN ---
+    // Manejo de navegación
     const cerrarSesion = document.getElementById("cerrar-sesion");
     if (cerrarSesion) {
         cerrarSesion.addEventListener("click", function(e) {
@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // --- VARIABLES GLOBALES Y SELECTORES ---
+    // Variables globales y selectores
     let pacientes = JSON.parse(localStorage.getItem("pacientes")) || [];
     let editIndex = null;
     let deleteIndex = null; // Guardará el índice del paciente a borrar
@@ -18,27 +18,27 @@ document.addEventListener("DOMContentLoaded", function() {
     const searchInput = document.getElementById("paciente-search");
     const btnNuevo = document.getElementById("btn-nuevo-paciente");
 
-    // --- Selectores del Modal Formulario ---
+    // Selectores del Modal Formulario
     const modalForm = document.getElementById("modal-paciente");
     const modalTitle = document.getElementById("modal-title");
     const form = document.getElementById("form-paciente");
     const closeFormBtn = document.getElementById("modal-paciente-close");
     const cancelFormBtn = document.getElementById("btn-cancelar-form");
 
-    // --- Selectores del Modal de Borrado ---
+    // Selectores del Modal de Borrado
     const modalDelete = document.getElementById("modal-delete-paciente");
     const deleteInfo = document.getElementById("delete-paciente-info");
     const btnConfirmarDelete = document.getElementById("btn-confirmar-delete");
     const btnCancelarDelete = document.getElementById("btn-cancelar-delete");
     const closeDeleteBtn = document.getElementById("modal-delete-close");
     
-    // --- Selectores del Modal de Éxito ---
+    // Selectores del Modal de Éxito
     const modalSuccess = document.getElementById("modal-success-paciente");
     const btnSuccessOk = document.getElementById("btn-success-ok");
     const closeSuccessBtn = document.getElementById("modal-success-close");
 
 
-    // --- RENDERIZAR LA TABLA DE PACIENTES ---
+    // Renderizar la tabla de pacientes
     function renderPacientes() {
         if (!tablaBody) return;
         tablaBody.innerHTML = "";
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // --- FUNCIONALIDAD DEL BUSCADOR ---
+    // Funcionalidad del buscador
     if (searchInput) {
         searchInput.addEventListener("keyup", function() {
             const filtro = searchInput.value.toLowerCase();
@@ -76,12 +76,12 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // --- ACCIONES DE LA TABLA (EDITAR Y ELIMINAR) ---
+    // Acciones de la tabla (editar y eliminar)
     if (tablaBody) {
         tablaBody.addEventListener("click", (e) => {
             const target = e.target;
 
-            // --- ELIMINAR PACIENTE (ABRIR MODAL DE CONFIRMACIÓN) ---
+            // Eliminar paciente (abrir modal de confirmación)
             if (target.classList.contains("delete-btn")) {
                 deleteIndex = target.getAttribute("data-index"); // Guarda el índice
                 const paciente = pacientes[deleteIndex];
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 modalDelete.style.display = "block"; // Muestra el modal de borrado
             }
 
-            // --- EDITAR PACIENTE (ABRIR MODAL DE FORMULARIO) ---
+            // Editar paciente (abrir modal de formulario)
             if (target.classList.contains("edit-btn")) {
                 editIndex = target.getAttribute("data-index");
                 const paciente = pacientes[editIndex];
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
     
-    // --- LÓGICA DEL MODAL DE BORRADO ---
+    // Lógica del modal de borrado
     // Clic en "Confirmar"
     btnConfirmarDelete.addEventListener("click", function() {
         pacientes.splice(deleteIndex, 1);
@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", function() {
     closeDeleteBtn.addEventListener("click", () => modalDelete.style.display = "none");
 
 
-    // --- ABRIR MODAL PARA NUEVO PACIENTE ---
+    // Abrir modal para nuevo paciente
     if (btnNuevo) {
         btnNuevo.addEventListener("click", function() {
             editIndex = null;
@@ -129,14 +129,14 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // --- CERRAR MODAL DE FORMULARIO ---
+    // Cerrar modal de formulario
     function closeFormModal() {
         modalForm.style.display = "none";
     }
     closeFormBtn.addEventListener("click", closeFormModal);
     cancelFormBtn.addEventListener("click", closeFormModal);
 
-    // --- LÓGICA DE GUARDAR (FORMULARIO) ---
+    // Lógica de guardar (formulario)
     if (form) {
         form.addEventListener("submit", function (e) {
             e.preventDefault();
@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // --- LÓGICA DEL MODAL DE ÉXITO ---
+    // Lógica del modal de éxito
     // Clic en "Aceptar" o "X"
     function closeSuccessModal() {
         modalSuccess.style.display = "none";
@@ -172,13 +172,13 @@ document.addEventListener("DOMContentLoaded", function() {
     btnSuccessOk.addEventListener("click", closeSuccessModal);
     closeSuccessBtn.addEventListener("click", closeSuccessModal);
     
-    // --- CERRAR MODALES AL HACER CLIC FUERA ---
+    // Cerrar modales al hacer clic fuera
     window.addEventListener("click", function(e) {
         if (e.target == modalForm) closeFormModal();
         if (e.target == modalDelete) modalDelete.style.display = "none";
         if (e.target == modalSuccess) closeSuccessModal();
     });
 
-    // --- INICIALIZAR ---
+    // Inicializar
     renderPacientes();
 });

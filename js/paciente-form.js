@@ -1,10 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
     
-    // --- CONFIGURACIÓN DE LA API ---
-    const API_BASE_URL = "http://localhost:3000/api";
+    // API base URL  
+    const API_BASE_URL = "https://ing-soft-turnero.onrender.com/api";
     
-    // Obtener referencias a los elementos del formulario
-    // Intentar con ambos IDs posibles (paciente-form y form-paciente)
+    // Selectores del formulario
     const form = document.getElementById("paciente-form") || document.getElementById("form-paciente");
     const btnCancelar = document.getElementById("cancelar") || document.getElementById("btn-cancelar");
     
@@ -13,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    // --- CERRAR SESIÓN (si existe) ---
+    // Cerrar sesión
     const cerrarSesion = document.getElementById("cerrar-sesion");
     if (cerrarSesion) {
         cerrarSesion.addEventListener("click", function (e) {
@@ -22,19 +21,19 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // --- BOTÓN CANCELAR ---
+    // Botón cancelar
     if (btnCancelar) {
         btnCancelar.addEventListener("click", function () {
             window.location.href = "../html/pacientes.html";
         });
     }
 
-    // --- CARGAR DATOS SI ES EDICIÓN ---
+    // Cargar datos si es edición
     const editarData = JSON.parse(localStorage.getItem("pacienteEditar") || "null");
     if (editarData && editarData.pacienteEditar) {
         const paciente = editarData.pacienteEditar;
         
-        // Mapear los campos según el ID que tenga el formulario
+        // Mapear los campos según el ID del formulario
         const nameField = document.getElementById("name");
         const surnameField = document.getElementById("surname");
         const ageField = document.getElementById("age");
@@ -50,11 +49,11 @@ document.addEventListener("DOMContentLoaded", function () {
         if (obraSocialField) obraSocialField.value = paciente.obraSocial || paciente.medical_insurance || "";
     }
 
-    // --- GUARDAR PACIENTE ---
+    // Guardar paciente
     form.addEventListener("submit", async function (e) {
         e.preventDefault();
 
-        // Obtener valores del formulario
+        // Obtener valores del formulario y validarlos
         const nameField = document.getElementById("name");
         const surnameField = document.getElementById("surname");
         const ageField = document.getElementById("age");
@@ -71,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
             medical_insurance: obraSocialField ? obraSocialField.value.trim() : ""
         };
 
-        // Validaciones básicas
+        // Validar campos requeridos
         if (!pacienteData.name || !pacienteData.surname || !pacienteData.dni || !pacienteData.medical_insurance) {
             mostrarError("Por favor complete todos los campos requeridos: Nombre, Apellido, DNI y Obra Social");
             return;

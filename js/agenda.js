@@ -2,7 +2,7 @@
 document.addEventListener("DOMContentLoaded", function() {
 
     // API base URL  
-    const API_BASE_URL = "http://localhost:3000/api";
+    const API_BASE_URL = "https://ing-soft-turnero.onrender.com/api";
 
     // Variables globales
     let currentDate = new Date(); // Guarda la fecha actual
@@ -286,7 +286,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // --- FUNCIONES DE AYUDA (Helpers) ---
+    // Funciones de ayuda (Helpers)
 
     /**
      * Busca un turno por fecha y hora
