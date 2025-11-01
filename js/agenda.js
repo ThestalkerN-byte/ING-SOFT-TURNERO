@@ -1,31 +1,29 @@
 // Espera a que el contenido se cargue
 document.addEventListener("DOMContentLoaded", function() {
 
-    // --- VARIABLES GLOBALES ---
+    // API base URL  
+    const API_BASE_URL = "http://localhost:3000/api";
+
+    // Variables globales
     let currentDate = new Date(); // Guarda la fecha actual
+    let turnos = []; // Turnos cargados desde la API
     
-    // Modal de Agendar
+    // Modal para agendar un turno
     const agendarModal = document.getElementById("modal-agendar");
-    // ¡ID Corregido y Verificado!
     const closeAgendarModalBtn = document.getElementById("close-agendar-modal");
+    const cancelAgendarBtn = document.getElementById("btn-cancelar-agendar");
     
-    // Modal de Eliminar Turno
+    // Modal para eliminar un turno
     const deleteTurnoModal = document.getElementById("modal-delete-turno");
     const closeDeleteTurnoModalBtn = document.getElementById("close-delete-turno-modal");
     const btnConfirmDeleteTurno = document.getElementById("btn-confirm-delete-turno");
     const btnCancelDeleteTurno = document.getElementById("btn-cancel-delete-turno");
     const deleteTurnoInfo = document.getElementById("delete-turno-info");
-    
-    // Almacenamiento "simulado"
-    let turnos = JSON.parse(localStorage.getItem('turnos')) || [];
-    let pacientes = JSON.parse(localStorage.getItem('pacientes')) || [];
 
-    // --- INICIALIZACIÓN ---
-    // startClock();
-    renderAgenda();
-
-    // --- MANEJADORES DE EVENTOS (EVENT LISTENERS) ---
+    // Cargo los turnos 
+    cargarTurnos();
     
+    // Event listeners para navegación
     document.getElementById("cerrar-sesion").addEventListener("click", function(e) {
         e.preventDefault();
         window.location.href = "index.html";
@@ -41,11 +39,18 @@ document.addEventListener("DOMContentLoaded", function() {
         renderAgenda();
     });
 
-    // Clic en "Cerrar" (X) en el modal de AGENDAR
+    // Event listeners del modal de agendar
     closeAgendarModalBtn.addEventListener("click", closeAgendarModal);
-
-    // Guardar el formulario del modal de AGENDAR
+    cancelAgendarBtn.addEventListener("click", closeAgendarModal);
     document.getElementById("form-agendar").addEventListener("submit", saveTurno);
+
+    // Event listeners del modal de eliminación
+    btnConfirmDeleteTurno.addEventListener("click", function() {
+        const turnoId = this.dataset.id;
+        confirmDeleteTurno(turnoId);
+    });
+    closeDeleteTurnoModalBtn.addEventListener("click", () => deleteTurnoModal.style.display = "none");
+    btnCancelDeleteTurno.addEventListener("click", () => deleteTurnoModal.style.display = "none");
 
     // Escuchar clics en la tabla de la agenda
     document.getElementById("agenda-body").addEventListener("click", function(e) {
@@ -62,29 +67,33 @@ document.addEventListener("DOMContentLoaded", function() {
             openDeleteTurnoModal(turnoId);
         }
     });
-    
-    // --- Eventos del Modal de Eliminación ---
-    
-    // Clic en "Confirmar Eliminación"
-    btnConfirmDeleteTurno.addEventListener("click", function() {
-        const turnoId = this.dataset.id;
-        confirmDeleteTurno(turnoId);
-    });
-    
-    // Clics para cerrar el modal de eliminación
-    closeDeleteTurnoModalBtn.addEventListener("click", () => deleteTurnoModal.style.display = "none");
-    btnCancelDeleteTurno.addEventListener("click", () => deleteTurnoModal.style.display = "none");
 
-    // Clic fuera de los modales (cierra el modal activo)
+    // Clic fuera de los modales para cerrarlos
     window.addEventListener("click", function(e) {
-        if (e.target == agendarModal) {
-            closeAgendarModal();
-        }
-        if (e.target == deleteTurnoModal) {
-            deleteTurnoModal.style.display = "none";
-        }
+        if (e.target == agendarModal) closeAgendarModal();
+        if (e.target == deleteTurnoModal) deleteTurnoModal.style.display = "none";
     });
 
+    /**
+     * Carga los turnos desde la API
+     */
+    async function cargarTurnos() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/turnos`);
+            const result = await response.json();
+            
+            if (result.success) {
+                turnos = result.data || [];
+                renderAgenda();
+            } else {
+                console.error("Error al cargar turnos:", result.error);
+                mostrarError("Error al cargar los turnos. Por favor, recarga la página.");
+            }
+        } catch (error) {
+            console.error("Error al cargar turnos:", error);
+            mostrarError("Error de conexión. Verifica que el servidor esté corriendo.");
+        }
+    }
 
     /**
      * Dibuja la agenda completa (días, horas, botones)
@@ -110,12 +119,12 @@ document.addEventListener("DOMContentLoaded", function() {
             hora.setMinutes(hora.getMinutes() + 40);
         }
 
-        for (const hora of horarios) {
+        for (const horaStr of horarios) {
             const fila = document.createElement("tr");
             
             const celdaHora = document.createElement("td");
             celdaHora.className = "hora-col";
-            celdaHora.textContent = hora;
+            celdaHora.textContent = horaStr;
             fila.appendChild(celdaHora);
 
             for (let i = 0; i < 5; i++) {
@@ -126,20 +135,20 @@ document.addEventListener("DOMContentLoaded", function() {
                 
                 const celdaDia = document.createElement("td");
                 
-                const turno = findTurno(fechaISO, hora);
+                // Buscar turno en esta fecha y hora
+                const turno = findTurnoPorFechaYHora(fechaISO, horaStr);
 
                 if (turno) {
-                    const paciente = findPacienteByDNI(turno.pacienteDNI);
                     celdaDia.innerHTML = `
                         <div class="turno-ocupado">
-                            <span class="turno-paciente">${paciente.apellido}, ${paciente.nombre}</span>
-                            <div class="turno-motivo">${turno.motivo}</div>
-                            <button class="eliminar-turno-btn" data-id="${turno.id}">&times;</button>
+                            <span class="turno-paciente">${turno.surname}, ${turno.name}</span>
+                            <div class="turno-motivo">${turno.description || 'Sin descripción'}</div>
+                            <button class="eliminar-turno-btn" data-id="${turno._id}">&times;</button>
                         </div>
                     `;
                 } else {
                     celdaDia.innerHTML = `
-                        <button class="agendar-btn" data-fecha="${fechaISO}" data-hora="${hora}">+ Agendar</button>
+                        <button class="agendar-btn" data-fecha="${fechaISO}" data-hora="${horaStr}">+ Agendar</button>
                     `;
                 }
                 fila.appendChild(celdaDia);
@@ -149,105 +158,172 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     /**
-     * Abre el pop-up (modal) para agendar
+     * Abre el modal para agendar un turno
      */
     function openAgendarModal(fecha, hora) {
         agendarModal.style.display = "block";
-        document.getElementById("modal-horario").textContent = `${new Date(fecha + 'T00:00:00').toLocaleDateString("es-ES", {weekday: 'long', day: 'numeric', month: 'long'})} a las ${hora} hs`;
         
-        document.getElementById("form-agendar").reset();
+        // Formatear la fecha para mostrarla
+        const fechaObj = new Date(fecha + 'T00:00:00');
+        const fechaFormateada = fechaObj.toLocaleDateString("es-ES", {
+            weekday: 'long', 
+            day: 'numeric', 
+            month: 'long'
+        });
         
+        document.getElementById("modal-horario").textContent = 
+            `${fechaFormateada} a las ${hora} hs`;
+        
+        // Preestablecer fecha y hora (ocultos)
         document.getElementById("modal-fecha").value = fecha;
         document.getElementById("modal-hora").value = hora;
+        
+        // Limpiar el formulario
+        document.getElementById("form-agendar").reset();
+        
+        // Reestablecer los valores ocultos después de reset
+        document.getElementById("modal-fecha").value = fecha;
+        document.getElementById("modal-hora").value = hora;
+        
+        // Verificar si hay datos de pacientes temporales para prellenar
+        // (esto se puede usar si hay un selector de paciente en el futuro)
     }
 
     /**
-     * Cierra el pop-up (modal) de agendar
+     * Cierra el modal de agendar
      */
     function closeAgendarModal() {
         agendarModal.style.display = "none";
     }
 
     /**
-     * Guarda el turno Y el paciente
+     * Guarda el turno en el backend
      */
-    function saveTurno(e) {
-        e.preventDefault(); 
+    async function saveTurno(e) {
+        e.preventDefault();
 
-        const paciente = {
-            dni: document.getElementById("modal-dni").value,
-            nombre: document.getElementById("modal-nombre").value,
-            apellido: document.getElementById("modal-apellido").value,
-            telefono: document.getElementById("modal-telefono").value,
-            obraSocial: document.getElementById("modal-obraSocial").value,
+        const fecha = document.getElementById("modal-fecha").value;
+        const hora = document.getElementById("modal-hora").value;
+        
+        // Construir el timestamp completo (fecha + hora)
+        const assignedSchedule = `${fecha}T${hora}:00`;
+
+        const turnoData = {
+            assigned_schedule: assignedSchedule,
+            description: document.getElementById("modal-motivo").value || null,
+            dni: parseInt(document.getElementById("modal-dni").value),
+            name: document.getElementById("modal-nombre").value,
+            surname: document.getElementById("modal-apellido").value,
+            phone: document.getElementById("modal-telefono").value || null,
+            medical_insurance: document.getElementById("modal-obraSocial").value
         };
 
-        const turno = {
-            id: 'turno_' + Date.now(), // ID único
-            fecha: document.getElementById("modal-fecha").value,
-            hora: document.getElementById("modal-hora").value,
-            motivo: document.getElementById("modal-motivo").value,
-            pacienteDNI: paciente.dni,
-        };
+        try {
+            const response = await fetch(`${API_BASE_URL}/turnos`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(turnoData)
+            });
 
-        // Guardar el Paciente (o actualizarlo si ya existe por DNI)
-        const pacienteIndex = pacientes.findIndex(p => p.dni === paciente.dni);
-        if (pacienteIndex > -1) {
-            pacientes[pacienteIndex] = paciente;
-        } else {
-            pacientes.push(paciente);
+            const result = await response.json();
+
+            if (result.success) {
+                closeAgendarModal();
+                mostrarExito("Turno creado correctamente");
+                cargarTurnos(); // Recargar los turnos
+            } else {
+                mostrarError(result.error || "Error al crear el turno");
+            }
+        } catch (error) {
+            console.error("Error al crear turno:", error);
+            mostrarError("Error de conexión. Verifica que el servidor esté corriendo.");
         }
-        localStorage.setItem('pacientes', JSON.stringify(pacientes));
-
-        // Guardar el Turno
-        turnos.push(turno);
-        localStorage.setItem('turnos', JSON.stringify(turnos));
-
-        closeAgendarModal();
-        renderAgenda();
     }
 
     /**
-     * Abre el modal de confirmación de borrado
+     * Abre el modal de confirmación de eliminación
      */
     function openDeleteTurnoModal(turnoId) {
-        const turno = turnos.find(t => t.id === turnoId);
+        const turno = turnos.find(t => t._id === turnoId);
         if (!turno) return;
         
-        const paciente = findPacienteByDNI(turno.pacienteDNI);
+        const fechaObj = new Date(turno.assigned_schedule);
+        const fechaFormateada = fechaObj.toLocaleDateString("es-ES");
+        const horaFormateada = fechaObj.toLocaleTimeString("es-ES", { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
         
-        deleteTurnoInfo.textContent = `Paciente: ${paciente.apellido}, ${paciente.nombre} - Fecha: ${turno.fecha} - Hora: ${turno.hora}`;
+        deleteTurnoInfo.textContent = 
+            `Paciente: ${turno.surname}, ${turno.name} - Fecha: ${fechaFormateada} - Hora: ${horaFormateada}`;
         btnConfirmDeleteTurno.dataset.id = turnoId;
         deleteTurnoModal.style.display = "block";
     }
 
     /**
-     * Lógica que se ejecuta al confirmar la eliminación
+     * Confirma y ejecuta la eliminación del turno
      */
-    function confirmDeleteTurno(turnoId) {
-        turnos = turnos.filter(t => t.id !== turnoId);
-        localStorage.setItem('turnos', JSON.stringify(turnos));
-        
-        deleteTurnoModal.style.display = "none";
-        renderAgenda();
-    }
+    async function confirmDeleteTurno(turnoId) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/turnos/${turnoId}`, {
+                method: "DELETE"
+            });
 
+            const result = await response.json();
+
+            if (result.success) {
+                deleteTurnoModal.style.display = "none";
+                mostrarExito("Turno eliminado correctamente");
+                cargarTurnos(); // Recargar los turnos
+            } else {
+                mostrarError(result.error || "Error al eliminar el turno");
+            }
+        } catch (error) {
+            console.error("Error al eliminar turno:", error);
+            mostrarError("Error de conexión. Verifica que el servidor esté corriendo.");
+        }
+    }
 
     // --- FUNCIONES DE AYUDA (Helpers) ---
 
-    function findTurno(fecha, hora) {
-        return turnos.find(t => t.fecha === fecha && t.hora === hora);
+    /**
+     * Busca un turno por fecha y hora
+     */
+    function findTurnoPorFechaYHora(fecha, horaStr) {
+        return turnos.find(t => {
+            const turnoDate = new Date(t.assigned_schedule);
+            const turnoFecha = turnoDate.toISOString().split('T')[0];
+            const turnoHora = turnoDate.toLocaleTimeString("es-ES", { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            return turnoFecha === fecha && turnoHora === horaStr;
+        });
     }
 
-    function findPacienteByDNI(dni) {
-        return pacientes.find(p => p.dni === dni) || { nombre: "Paciente", apellido: "No encontrado" };
-    }
-    
+    /**
+     * Obtiene el lunes de la semana de una fecha
+     */
     function getMonday(d) {
         d = new Date(d);
-        let day = d.getDay(),
-            diff = d.getDate() - day + (day == 0 ? -6 : 1);
+        let day = d.getDay();
+        let diff = d.getDate() - day + (day == 0 ? -6 : 1);
         return new Date(d.setDate(diff));
     }
 
+    /**
+     * Muestra un mensaje de error
+     */
+    function mostrarError(mensaje) {
+        alert("Error: " + mensaje);
+    }
+
+    /**
+     * Muestra un mensaje de éxito
+     */
+    function mostrarExito(mensaje) {
+        alert("✓ " + mensaje);
+    }
 });

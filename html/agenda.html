@@ -43,10 +43,68 @@
     </main>
 
     <div id="modal-agendar" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-agendar-modal">&times;</span>
+            <h2>Agendar Turno</h2>
+            <p id="modal-horario" style="margin-bottom: 1rem; color: #666;"></p>
+            
+            <form id="form-agendar">
+                <input type="hidden" id="modal-fecha" name="fecha">
+                <input type="hidden" id="modal-hora" name="hora">
+                
+                <div class="form-paciente">
+                    <div class="input-group">
+                        <label for="modal-dni">DNI:</label>
+                        <input type="text" id="modal-dni" maxlength="8" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="modal-nombre">Nombre:</label>
+                        <input type="text" id="modal-nombre" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="modal-apellido">Apellido:</label>
+                        <input type="text" id="modal-apellido" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="modal-telefono">Teléfono:</label>
+                        <input type="tel" id="modal-telefono" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="modal-obraSocial">Obra Social:</label>
+                        <input type="text" id="modal-obraSocial" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="modal-motivo">Motivo/Descripción:</label>
+                        <textarea id="modal-motivo" rows="3" placeholder="Descripción de la consulta"></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="submit" class="action-btn edit-btn">Guardar Turno</button>
+                    <button type="button" id="btn-cancelar-agendar" class="action-btn btn-secondary">Cancelar</button>
+                </div>
+            </form>
         </div>
+    </div>
 
     <div id="modal-delete-turno" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <span class="close-btn" id="close-delete-turno-modal">&times;</span>
+            <h2>Confirmar Eliminación</h2>
+            <p>¿Está seguro de que desea eliminar este turno?</p>
+            <p id="delete-turno-info" style="font-weight: bold;"></p>
+            
+            <div class="modal-actions">
+                <button id="btn-cancel-delete-turno" class="action-btn btn-secondary">Cancelar</button>
+                <button id="btn-confirm-delete-turno" class="action-btn btn-danger">Confirmar</button>
+            </div>
         </div>
+    </div>
 
 
     <script src="../js/agenda.js"></script>
