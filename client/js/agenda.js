@@ -1,7 +1,7 @@
 // Espera a que el contenido se cargue
 document.addEventListener("DOMContentLoaded", function() {
 
-    // API base URL  
+    // API base URL    
     const API_BASE_URL = "https://ing-soft-turnero.onrender.com/api";
 
     // Variables globales
@@ -19,6 +19,20 @@ document.addEventListener("DOMContentLoaded", function() {
     const btnConfirmDeleteTurno = document.getElementById("btn-confirm-delete-turno");
     const btnCancelDeleteTurno = document.getElementById("btn-cancel-delete-turno");
     const deleteTurnoInfo = document.getElementById("delete-turno-info");
+
+    // === NUEVOS SELECTORES ===
+    // Modal de Éxito
+    const successTurnoModal = document.getElementById("modal-success-turno");
+    const closeSuccessTurnoModalBtn = document.getElementById("close-success-turno-modal");
+    const btnSuccessTurnoOk = document.getElementById("btn-success-turno-ok");
+    const successTurnoMessage = document.getElementById("success-turno-message");
+
+    // Modal de Error
+    const errorTurnoModal = document.getElementById("modal-error-turno");
+    const closeErrorTurnoModalBtn = document.getElementById("close-error-turno-modal");
+    const btnErrorTurnoOk = document.getElementById("btn-error-turno-ok");
+    const errorTurnoMessage = document.getElementById("error-turno-message");
+    // === FIN NUEVOS SELECTORES ===
 
     // Cargo los turnos 
     cargarTurnos();
@@ -52,6 +66,22 @@ document.addEventListener("DOMContentLoaded", function() {
     closeDeleteTurnoModalBtn.addEventListener("click", () => deleteTurnoModal.style.display = "none");
     btnCancelDeleteTurno.addEventListener("click", () => deleteTurnoModal.style.display = "none");
 
+   
+    // Event listeners para modal de éxito
+    function closeSuccessModal() {
+        successTurnoModal.style.display = "none";
+    }
+    closeSuccessTurnoModalBtn.addEventListener("click", closeSuccessModal);
+    btnSuccessTurnoOk.addEventListener("click", closeSuccessModal);
+
+    // Event listeners para modal de error
+    function closeErrorModal() {
+        errorTurnoModal.style.display = "none";
+    }
+    closeErrorTurnoModalBtn.addEventListener("click", closeErrorModal);
+    btnErrorTurnoOk.addEventListener("click", closeErrorModal);
+    
+
     // Escuchar clics en la tabla de la agenda
     document.getElementById("agenda-body").addEventListener("click", function(e) {
         // Clic en el botón "+ Agendar"
@@ -72,6 +102,8 @@ document.addEventListener("DOMContentLoaded", function() {
     window.addEventListener("click", function(e) {
         if (e.target == agendarModal) closeAgendarModal();
         if (e.target == deleteTurnoModal) deleteTurnoModal.style.display = "none";
+        if (e.target == successTurnoModal) closeSuccessModal();
+        if (e.target == errorTurnoModal) closeErrorModal();
     });
 
     /**
@@ -109,6 +141,28 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("semana-titulo").textContent = 
             `Semana del ${primerDiaSemana.toLocaleDateString("es-ES", {day: '2-digit', month: 'long'})} 
              al ${ultimoDiaSemana.toLocaleDateString("es-ES", {day: '2-digit', month: 'long'})}`;
+
+        
+       
+        const diasSemanaIds = ["lunes", "martes", "miercoles", "jueves", "viernes"];
+        const diasNombres = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+
+        for (let i = 0; i < 5; i++) {
+            const diaActual = new Date(primerDiaSemana);
+            diaActual.setDate(diaActual.getDate() + i);
+            
+            const dia = diaActual.getDate();
+            const mes = diaActual.getMonth() + 1; // getMonth() es 0-indexado
+            const fechaFormateada = `${dia}/${mes}`;
+            
+            const headerCell = document.getElementById(`header-${diasSemanaIds[i]}`);
+            if (headerCell) {
+                // Usamos innerHTML para añadir un salto de línea y la fecha
+                headerCell.innerHTML = `${diasNombres[i]} <br> <span class="fecha-header">${fechaFormateada}</span>`;
+            }
+        }
+        
+
 
         const horarios = [];
         let hora = new Date();
@@ -184,9 +238,6 @@ document.addEventListener("DOMContentLoaded", function() {
         // Reestablecer los valores ocultos después de reset
         document.getElementById("modal-fecha").value = fecha;
         document.getElementById("modal-hora").value = hora;
-        
-        // Verificar si hay datos de pacientes temporales para prellenar
-        // (esto se puede usar si hay un selector de paciente en el futuro)
     }
 
     /**
@@ -309,7 +360,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function getMonday(d) {
         d = new Date(d);
         let day = d.getDay();
-        let diff = d.getDate() - day + (day == 0 ? -6 : 1);
+        let diff = d.getDate() - day + (day == 0 ? -6 : 1); // Si es domingo (0), retrocede 6 días; si no, retrocede (day-1)
         return new Date(d.setDate(diff));
     }
 
@@ -317,13 +368,17 @@ document.addEventListener("DOMContentLoaded", function() {
      * Muestra un mensaje de error
      */
     function mostrarError(mensaje) {
-        alert("Error: " + mensaje);
+        // alert("Error: " + mensaje); // Reemplazado
+        errorTurnoMessage.textContent = mensaje;
+        errorTurnoModal.style.display = "block";
     }
 
     /**
      * Muestra un mensaje de éxito
      */
     function mostrarExito(mensaje) {
-        alert("✓ " + mensaje);
+        // alert("✓ " + mensaje); // Reemplazado
+        successTurnoMessage.textContent = mensaje;
+        successTurnoModal.style.display = "block";
     }
 });

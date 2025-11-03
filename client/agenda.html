@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agenda | Consultorio Dr. Amado</title>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -29,11 +29,11 @@
             <thead>
                 <tr>
                     <th class="hora-col">Hora</th>
-                    <th>Lunes</th>
-                    <th>Martes</th>
-                    <th>Miércoles</th>
-                    <th>Jueves</th>
-                    <th>Viernes</th>
+                    <th id="header-lunes">Lunes</th>
+                    <th id="header-martes">Martes</th>
+                    <th id="header-miercoles">Miércoles</th>
+                    <th id="header-jueves">Jueves</th>
+                    <th id="header-viernes">Viernes</th>
                 </tr>
             </thead>
             <tbody id="agenda-body">
@@ -107,6 +107,29 @@
     </div>
 
 
-    <script src="../js/agenda.js"></script>
+    <div id="modal-success-turno" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <span class="close-btn" id="close-success-turno-modal">&times;</span>
+            <h2>¡Éxito!</h2>
+            <p id="success-turno-message">Operación realizada correctamente.</p>
+            <div class="modal-actions">
+                <button id="btn-success-turno-ok" class="action-btn edit-btn">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-error-turno" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <span class="close-btn" id="close-error-turno-modal">&times;</span>
+            <h2 style="color: #dc3545;">Error</h2>
+            <p id="error-turno-message">Ha ocurrido un error.</p>
+            <div class="modal-actions">
+                <button id="btn-error-turno-ok" class="action-btn btn-secondary">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="js/agenda.js"></script>
 </body>
 </html>

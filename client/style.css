@@ -1,5 +1,5 @@
 /* =================================
-   ESTILOS GENERALES Y LOGIN
+    ESTILOS GENERALES Y LOGIN
    ================================= */
 
 body {
@@ -80,7 +80,7 @@ body {
 }
 
 /* =================================
-   ESTILOS PARA LA APP (Agenda y Pacientes)
+    ESTILOS PARA LA APP (Agenda y Pacientes)
    ================================= */
 
 /* --- Barra de Navegación --- */
@@ -178,7 +178,7 @@ body {
 
 .agenda-table th,
 .agenda-table td {
-    border: 1px solid #ddd;
+    border: 2px solid #ccc; /* Borde más grueso y oscuro */
     padding: 0.5rem;
     height: 60px;
     text-align: left;
@@ -190,7 +190,17 @@ body {
     background-color: #f9f9f9;
     text-align: center;
     padding: 0.75rem 0.5rem;
+    /* Aseguramos que el contenido se alinee bien */
+    vertical-align: middle; 
 }
+
+/* === NUEVO ESTILO PARA LA FECHA === */
+.agenda-table th .fecha-header {
+    font-size: 0.9rem;
+    font-weight: normal;
+    color: #555;
+}
+/* === FIN DE NUEVO ESTILO === */
 
 .agenda-table .hora-col {
     width: 80px;
@@ -316,10 +326,10 @@ body {
 }
 
 /* =================================
-   ESTILOS PARA EL MODAL (POP-UP)
+    ESTILOS PARA EL MODAL (POP-UP)
    ================================= */
 .modal {
-    display: none; /* ¡¡ESTA LÍNEA OCULTA LOS POP-UPS!! */
+    display: none; 
     position: fixed; 
     z-index: 1000;
     left: 0;
@@ -357,7 +367,7 @@ body {
 }
 
 /* =================================
-   ESTILOS PARA BOTONES DE ACCIÓN (Editar/Eliminar)
+    ESTILOS PARA BOTONES DE ACCIÓN (Editar/Eliminar)
    ================================= */
 .action-btn {
     padding: 0.3rem 0.6rem;
@@ -389,7 +399,7 @@ body {
 }
 
 /* =================================
-   ESTILOS PARA MODAL DE CONFIRMACIÓN
+    ESTILOS PARA MODAL DE CONFIRMACIÓN
    ================================= */
 
 .modal-actions {
@@ -419,8 +429,8 @@ body {
 }
 
 /* =================================
-   ESTILOS PANTALLA DE PACIENTES
-   ================================= */
+    ESTILOS PANTALLA DE PACIENTES
+   ================================= */
 
 .pacientes-header {
     display: flex;
@@ -492,7 +502,7 @@ body {
 }
 
 /* =================================
-   ESTILOS PARA FORMULARIO EN MODAL
+    ESTILOS PARA FORMULARIO EN MODAL
    ================================= */
 
 /* Reutilizamos esta clase que ya usaste en la agenda */
