@@ -60,12 +60,12 @@
                     
                     <div class="input-group">
                         <label for="modal-nombre">Nombre:</label>
-                        <input type="text" id="modal-nombre" required>
+                        <input type="text" id="modal-nombre" required oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')">
                     </div>
                     
                     <div class="input-group">
                         <label for="modal-apellido">Apellido:</label>
-                        <input type="text" id="modal-apellido" required>
+                        <input type="text" id="modal-apellido" required oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')">
                     </div>
                     
                     <div class="input-group">
