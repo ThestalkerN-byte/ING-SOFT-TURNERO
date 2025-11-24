@@ -53,19 +53,20 @@
             <h2 id="modal-title">Registrar Paciente</h2>
             
             <form id="form-paciente">
-                <div class="form-paciente">
+                <div class="form-paciente"> 
                     <div class="input-group">
                         <label for="name">Nombre:</label>
-                        <input type="text" id="name" required>
+                        <input type="text" id="name" oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')" required>
                     </div>
+
                     <div class="input-group">
                         <label for="surname">Apellido:</label>
-                        <input type="text" id="surname" required>
+                        <input type="text" id="surname" oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')" required>
                     </div>
 
                     <div class="input-group">
                         <label for="age">Edad:</label>
-                        <input type="number" id="age" min="0" required>
+                        <input type="number" id="age" min="0" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     </div>
 
                     <div class="input-group">
